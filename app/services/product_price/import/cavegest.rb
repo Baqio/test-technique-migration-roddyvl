@@ -7,7 +7,7 @@ class ProductPrice::Import::Cavegest < Importer::Base
   def call
     imported = 0
 
-    CSV.parse(File.read(path), headers: true, col_sep: COLUMN_SEP).each do |row|
+    CSV.parse(File.read(path, encoding: 'iso-8859-1:UTF-8'), headers: true, col_sep: COLUMN_SEP).each do |row|
       reference = N.text(row["Ref"])
       next if reference.nil?
 
