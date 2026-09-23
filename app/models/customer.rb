@@ -2,8 +2,8 @@ class Customer < ActiveRecord::Base
   KINDS = %w[customer supplier prospect].freeze
 
   validates :reference, presence: true, uniqueness: true
-  validates :kind, inclusion: { in: KINDS }
-  validate  :name_present
+  validates :kind, inclusion: { in: KINDS, message: "n'est pas un type de tiers reconnu (%{value})" }
+  validate :name_present
 
   private
 
