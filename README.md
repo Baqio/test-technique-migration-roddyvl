@@ -96,3 +96,45 @@ simplement pourquoi.
 Les gems aussi : `roo` est une suggestion, pas une contrainte.
 
 Bon courage.
+
+
+## Notes de reprise
+### Décisions prises sur les cas ambigus
+
+- **Doublons de référence client** (3 cas, données strictement identiques) :
+  fusionnés silencieusement, aucune perte d'information puisque les deux
+  occurrences étaient identiques.
+- **Doublons de référence produit** (6 cas, données réellement différentes
+  sous la même référence) : rejetés explicitement, aucune des deux versions
+  n'est importée. Un doublon avec des données divergentes ne peut pas être
+  arbitré automatiquement sans risquer de garder la mauvaise version.
+- **Code famille "R" (Revendeur)**, environ 20% des clients du fichier, absent du
+  modèle Customer (customer/supplier/prospect) : mappé par défaut sur
+  "customer", la distinction restant visible dans `customer_category`.
+- **Pays vide** (environ 20% des clients) : laissé `nil` plutôt que de supposer
+  "France" par défaut, pour ne pas introduire une donnée fausse silencieuse.
+- **Clients sans aucun nom identifiable côté facturation** (3 cas, même
+  quand une adresse de livraison existe par ailleurs) : rejetés, pas de
+  repli automatique sur le nom du destinataire de livraison.
+- **Formats de contenant non reconnus** ("Carton 6", "6 x 75") : ce sont des
+  conditionnements, pas des volumes unitaires ; `volume_ml` est laissé vide
+  plutôt que d'extraire un chiffre au hasard dans le texte.
+- **Cases de prix vides** (grille SALON vide sur plus de la moitié du
+  catalogue, PART sur quelques produits) : aucun tarif n'est créé pour ces
+  cas, plutôt qu'un faux prix à 0€.
+- **Conversion TTC→HT de la grille EXPO** : calculée avec le taux de TVA
+  réel de chaque ligne (20% ou 5,5% selon le produit), pas un taux fixe.
+
+### À confirmer avec le client avant une reprise en réel
+
+- Le mapping "Revendeur → customer" est-il correct, ou faut-il un
+  traitement distinct pour ces ~1000 comptes ?
+- Les clients sans pays renseigné sont-ils tous français, ou faut-il les
+  traiter au cas par cas ?
+- Les 6 références produit en doublon avec des données conflictuelles
+  (ex: VIENM6 désigne à la fois un vin et une eau de source) : quelle est
+  la bonne version à conserver ?
+- Les 3 clients sans nom identifiable (dont un avec une adresse de
+  livraison à un autre nom) : que faire de ces fiches ?
+- Les codes pays à 2 lettres ne sont pas validés contre une vraie liste
+  ISO, à surveiller si un futur export contient une valeur erronée.
