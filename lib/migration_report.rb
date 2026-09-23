@@ -24,7 +24,29 @@ class MigrationReport
   def warnings = issues.select { |issue| issue.level == :warning }
 
   def to_s
-    raise NotImplementedError
+    lines = []
+
+    lines << " Rapport de reprise "
+    lines << ""
+
+    lines << "Créations :"
+    counters.each do |key, value|
+      lines << "  #{key} : #{value}"
+    end
+    lines << ""
+
+    lines << "Rejets (#{errors.size}) :"
+    errors.each do |issue|
+      lines << "  [#{issue.source}] #{issue.locator} : #{issue.message}"
+    end
+    lines << ""
+
+    lines << "À vérifier (#{warnings.size}) :"
+    warnings.each do |issue|
+      lines << "  [#{issue.source}] #{issue.locator} : #{issue.message}"
+    end
+
+    lines.join("\n")
   end
 
   private

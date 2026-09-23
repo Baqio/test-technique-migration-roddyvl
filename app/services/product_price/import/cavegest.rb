@@ -43,7 +43,6 @@ class ProductPrice::Import::Cavegest < Importer::Base
     end
 
     puts "#{imported} produits importés"
-    puts report.counters
   end
 
   private

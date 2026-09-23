@@ -13,11 +13,7 @@ class Customer::Import::Cavegest < Importer::Base
           tier = N.text(row[19])
 
         if tier == "R"
-          report.warn(
-            source:,
-            locator: N.text(row[0]),
-            message: "Client de type Revendeur (R), mappé automatiquement sur 'customer', à confirmer avec le client"
-          )
+          report.count("customers_kind_r_mapped_to_customer")
         end
 
         creation_date = begin
