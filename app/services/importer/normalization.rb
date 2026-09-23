@@ -25,7 +25,7 @@ module Importer::Normalization
   end
 
   def decimal(value)
-    value.to_s.to_f
+    value.to_s.tr(",", ".").to_d
   end
 
   def date(value)
